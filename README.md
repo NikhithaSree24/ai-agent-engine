@@ -40,6 +40,7 @@ ai-agent-engine/
 └─ README.md
 
 3. Design Explanation
+   
 3.1 Nodes
 
 Nodes are simple Python functions that:
@@ -114,6 +115,7 @@ Or explicit _loop_break
 Implementation: app/engine.py.
 
 3.4 API Endpoints
+
 ✔ Create graph
 
 POST /graph/create
@@ -129,9 +131,11 @@ GET /graph/state/{run_id}
 4. How to Run the Project
 
 Step 1 — Install dependencies
+
 pip install -r requirements.txt
 
 Step 2 — Start FastAPI server
+
 uvicorn app.main:app --reload --port 8000
 
 
@@ -140,6 +144,7 @@ Output:
 Uvicorn running on http://127.0.0.1:8000
 
 5. Creating a Graph
+
 curl -X POST "http://127.0.0.1:8000/graph/create" \
 -H "Content-Type: application/json" \
 -d @graph_code_review.json
@@ -150,6 +155,7 @@ Output example:
 {"graph_id": "bfffe085-4f30-46d5-9c35-fc24a2145f26"}
 
 6. Running the Graph
+   
 curl -X POST "http://127.0.0.1:8000/graph/run" \
 -H "Content-Type: application/json" \
 -d '{
@@ -165,9 +171,10 @@ Output:
 {"run_id": "1d0d6ad4-813b-44ba-be41-867de8eae675"}
 
 7. Checking Run Status
+   
 curl http://127.0.0.1:8000/graph/state/1d0d6ad4-813b-44ba-be41-867de8eae675
 
-8. Sample Output (REAL OUTPUT from my run)
+9. Sample Output (REAL OUTPUT from my run)
 
 {
     "run_id":  "1d0d6ad4-813b-44ba-be41-867de8eae675",
