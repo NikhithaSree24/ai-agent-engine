@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {"name": "extract", "func": "extract", "config": {}},
+    {"name": "check_complexity", "func": "check_complexity", "config": {}},
+    {"name": "detect_issues", "func": "detect_issues", "config": {}},
+    {"name": "suggest", "func": "suggest_improvements", "config": {}}
+  ],
+  "edges": {
+    "extract": [{"to": "check_complexity"}],
+    "check_complexity": [{"to": "detect_issues"}],
+    "detect_issues": [
+      {"when": "state.get('quality_score',0) < 0.9", "to": "suggest"},
+      {"when": "state.get('quality_score',0) >= 0.9", "to": "suggest"}
+    ],
+    "suggest": [
+      {"when": "state.get('quality_score',0) < 0.95", "to": "check_complexity"},
+      {"when": "state.get('quality_score',0) >= 0.95", "to": ""}
+    ]
+  }
+}

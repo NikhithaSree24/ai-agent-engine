@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Mini Code Review UI</title></head>
+<body>
+<h2>Code Review Runner</h2>
+<textarea id="code" rows="12" cols="80">def foo(x):\n    print(x)\n    return x*2</textarea><br>
+<select id="graphId"></select>
+<button id="refresh">Refresh Graphs</button>
+<button id="run">Run</button>
+<pre id="output"></pre>
+<script>
+async function refresh() {
+  const resp = await fetch('/graphs');
+  const data = await resp.json();
+  const sel = document.getElementById('graphId');
+  sel.innerHTML = '';
+  (data.graphs||[]).forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; sel.appendChild(o); });
+}
+document.getElementById('refresh').onclick = refresh;
+document.getElementById('run').onclick = async () => {
+  const code = document.getElementById('code').value;
+  const graph_id = document.getElementById('graphId').value;
+  const resp = await fetch('/graph/run', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({graph_id, initial_state:{code}})
+  });
+  const run = await resp.json();
+  document.getElementById('output').textContent = JSON.stringify(run,null,2);
+  // poll state
+  const rid = run.run_id;
+  const out = document.getElementById('output');
+  (async function poll(){
+    while(true){
+      const s = await fetch('/graph/state/'+rid); const j=await s.json();
+      out.textContent = JSON.stringify(j,null,2);
+      if (j.status !== 'running' && j.status !== 'queued') break;
+      await new Promise(r=>setTimeout(r,1000));
+    }
+  })();
+}
+refresh();
+</script>
+</body>
+</html>
